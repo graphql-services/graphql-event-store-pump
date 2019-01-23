@@ -7,6 +7,9 @@ This service can be used for 2 things:
 
 NOTE: batch importing should be sequential, so this worker should not be running more than once for each aggregator.
 
+## Diagram
+![EvemtStore Pump diagram](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/graphql-services/graphql-event-store-pump/master/resources/diagram.puml?v1 'EvemtStore Pump diagram')
+
 # Aggregator requirements
 
 Aggregator should have these 3 methods:

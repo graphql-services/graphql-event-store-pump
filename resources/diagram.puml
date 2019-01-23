@@ -1,0 +1,27 @@
+@startuml EventStore Pump diagram
+
+participant EventStore as es
+participant NSQ as nsq
+participant Pump as pump
+participant Aggregator as agg
+
+group Bootup
+    pump -> agg: GET /events/latest
+    agg -> pump: 404 Not found
+    
+    loop until all events processed
+        pump -> es: get next X events
+        es -> pump: return events
+        pump -> agg: POST /events/import
+        agg -> pump: 201 Created
+    end
+end
+
+group Continual updates
+    es --> nsq: create event
+    nsq --> pump: fetch event
+    pump -> agg: POST /events
+    agg -> pump: 201 Created
+end
+
+@enduml
