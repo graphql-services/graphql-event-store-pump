@@ -8,7 +8,7 @@ import (
 )
 
 // StartCmd ...
-func StartCmd(aggregatorURL) cli.Command {
+func StartCmd() cli.Command {
 	return cli.Command{
 		Name:        "start",
 		Description: "perform boot and start pump with healthcheck",

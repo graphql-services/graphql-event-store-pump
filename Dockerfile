@@ -1,8 +1,8 @@
 FROM golang as builder
 WORKDIR /go/src/github.com/graphql-services/graphql-event-store-pump
 COPY . .
-RUN go get ./... \
-    && CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /tmp/app .
+RUN go get ./... 
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /tmp/app .
 
 FROM alpine:3.5
 
