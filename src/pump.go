@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
+	"net/url"
+	"path"
 
 	"github.com/golang/glog"
 
@@ -13,7 +15,15 @@ import (
 
 // StartPumpWithHealthCheck ...
 func StartPumpWithHealthCheck(aggregatorURL string) error {
+
+	u, err := url.Parse(aggregatorURL)
+	if err != nil {
+		return err
+	}
+	u.Path = path.Join(u.Path, "/events")
+
 	eventstore.OnEvent(eventstore.OnEventOptions{
+		Channel: "test",
 		HandlerFunc: func(e eventstore.Event) error {
 			data, err := json.Marshal(e)
 
@@ -22,7 +32,7 @@ func StartPumpWithHealthCheck(aggregatorURL string) error {
 			}
 
 			glog.Infof("Sending Event %s", e.ID)
-			res, err := http.Post(aggregatorURL, "application/json", bytes.NewReader(data))
+			res, err := http.Post(u.String(), "application/json", bytes.NewReader(data))
 			if err != nil {
 				return err
 			}

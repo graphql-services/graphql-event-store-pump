@@ -1,6 +1,9 @@
 package cmd
 
 import (
+	"log"
+
+	"github.com/graphql-services/graphql-event-store-pump/src"
 	"github.com/urfave/cli"
 )
 
@@ -14,12 +17,18 @@ func BootCmd() cli.Command {
 				Name:   "aggregator-url",
 				EnvVar: "AGGREGATOR_URL",
 			},
-			cli.StringFlag{
-				Name:   "eventstore-url",
-				EnvVar: "EVENTSTORE_URL",
-			},
 		},
 		Action: func(c *cli.Context) error {
+			aggregatorURL := c.String("aggregator-url")
+			if aggregatorURL == "" {
+				log.Fatal("Missing AGGREGATOR_URL variable")
+			}
+
+			bootupOptions := src.PerformBootupOptions{AggregatorURL: aggregatorURL}
+			if err := src.PerformBootup(bootupOptions); err != nil {
+				return cli.NewExitError(err, 1)
+			}
+
 			return nil
 		},
 	}

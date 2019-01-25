@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"net/url"
 	"path"
 
 	"github.com/graphql-services/go-saga/eventstore"
@@ -21,8 +22,13 @@ type PerformBootupOptions struct {
 func PerformBootup(options PerformBootupOptions) error {
 	glog.Info("Initializing bootup")
 
-	latestEventURL := path.Join(options.AggregatorURL, "events/latest")
-	res, err := http.Get(latestEventURL)
+	u, err := url.Parse(options.AggregatorURL)
+	if err != nil {
+		return err
+	}
+
+	u.Path = path.Join(u.Path, "events/latest")
+	res, err := http.Get(u.String())
 	if err != nil {
 		return err
 	}
@@ -31,6 +37,8 @@ func PerformBootup(options PerformBootupOptions) error {
 		glog.Info("Bootup not required")
 		return nil
 	}
+
+	glog.Info("Booting up aggregator")
 
 	if err := checkStatusCode(res, 404, "checking last event"); err != nil {
 		return err

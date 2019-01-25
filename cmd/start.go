@@ -19,9 +19,7 @@ func StartCmd() cli.Command {
 			},
 		},
 		Action: func(c *cli.Context) error {
-
-			aggregatorURL := c.String("aggreagator-url")
-
+			aggregatorURL := c.String("aggregator-url")
 			if aggregatorURL == "" {
 				log.Fatal("Missing AGGREGATOR_URL variable")
 			}
