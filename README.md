@@ -1,4 +1,7 @@
 # graphql-event-store-pump
+
+[![Build Status](https://travis-ci.org/graphql-services/graphql-event-store-pump.svg?branch=master)](https://travis-ci.org/graphql-services/graphql-event-store-pump)
+
 Data pump for services aggregating EventStore events.
 
 This service can be used for 2 things:
