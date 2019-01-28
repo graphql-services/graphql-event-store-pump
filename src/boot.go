@@ -45,6 +45,9 @@ func PerformBootup(options PerformBootupOptions) error {
 	}
 
 	ctx := context.Background()
+
+	glog.Info("Fetching all events started")
+
 	ch := fetchAllEvents(ctx)
 
 	for resp := range ch {
@@ -55,6 +58,7 @@ func PerformBootup(options PerformBootupOptions) error {
 }
 
 func forwardResponse(ctx context.Context, res eventstore.FetchEventsResponse, aggregatorURL string) error {
+	glog.Info("Forwarding events", len(res.Events))
 	importURL := path.Join(aggregatorURL, "events/import")
 
 	data, err := json.Marshal(res.Events)
@@ -68,6 +72,8 @@ func forwardResponse(ctx context.Context, res eventstore.FetchEventsResponse, ag
 		return err
 	}
 
+	glog.Info("Events forwarded", resp.StatusCode)
+
 	return nil
 }
 
@@ -77,6 +83,7 @@ func fetchAllEvents(ctx context.Context) <-chan eventstore.FetchEventsResponse {
 
 	go func() {
 		for {
+			glog.Info("Fetching events from cursor", cursor)
 			options := eventstore.FetchEventsOptions{Cursor: cursor}
 
 			var data eventstore.FetchEventsResponse
