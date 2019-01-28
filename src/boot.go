@@ -8,9 +8,8 @@ import (
 	"net/url"
 	"path"
 
-	"github.com/graphql-services/go-saga/eventstore"
-
 	"github.com/golang/glog"
+	"github.com/graphql-services/go-saga/eventstore"
 )
 
 // PerformBootupOptions ..
@@ -62,11 +61,15 @@ func PerformBootup(options PerformBootupOptions) error {
 
 func forwardResponse(ctx context.Context, res eventstore.FetchEventsResponse, aggregatorURL string) error {
 	glog.Info("Forwarding events ", len(res.Events))
-	importURL := path.Join(aggregatorURL, "events/import")
+	importURL, err := url.Parse(aggregatorURL)
+	if err != nil {
+		return err
+	}
+	importURL.Path = path.Join(importURL.Path, "events/import")
 
 	data, err := json.Marshal(res.Events)
 
-	resp, err := http.Post(importURL, "application/json", bytes.NewReader(data))
+	resp, err := http.Post(importURL.String(), "application/json", bytes.NewReader(data))
 	if err != nil {
 		return err
 	}
