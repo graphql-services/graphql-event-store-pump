@@ -10,11 +10,10 @@ import (
 	"github.com/golang/glog"
 
 	"github.com/graphql-services/go-saga/eventstore"
-	"github.com/graphql-services/go-saga/healthcheck"
 )
 
-// StartPumpWithHealthCheck ...
-func StartPumpWithHealthCheck(aggregatorURL string) error {
+// StartPump ...
+func StartPump(aggregatorURL string) error {
 
 	u, err := url.Parse(aggregatorURL)
 	if err != nil {
@@ -48,5 +47,5 @@ func StartPumpWithHealthCheck(aggregatorURL string) error {
 		},
 	})
 
-	return healthcheck.StartHealthcheckServer()
+	return nil
 }

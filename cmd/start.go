@@ -3,6 +3,7 @@ package cmd
 import (
 	"log"
 
+	"github.com/graphql-services/go-saga/healthcheck"
 	"github.com/graphql-services/graphql-event-store-pump/src"
 	"github.com/urfave/cli"
 )
@@ -24,16 +25,18 @@ func StartCmd() cli.Command {
 				log.Fatal("Missing AGGREGATOR_URL variable")
 			}
 
-			bootupOptions := src.PerformBootupOptions{AggregatorURL: aggregatorURL}
-			if err := src.PerformBootup(bootupOptions); err != nil {
-				return cli.NewExitError(err, 1)
-			}
+			go func() {
+				bootupOptions := src.PerformBootupOptions{AggregatorURL: aggregatorURL}
+				if err := src.PerformBootup(bootupOptions); err != nil {
+					panic(err)
+				}
 
-			if err := src.StartPumpWithHealthCheck(aggregatorURL); err != nil {
-				return cli.NewExitError(err, 1)
-			}
+				if err := src.StartPump(aggregatorURL); err != nil {
+					panic(err)
+				}
+			}()
 
-			return nil
+			return healthcheck.StartHealthcheckServer()
 		},
 	}
 }
