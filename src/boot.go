@@ -90,7 +90,7 @@ func fetchAllEvents(ctx context.Context) <-chan eventstore.FetchEventsResponse {
 	go func() {
 		for {
 			glog.Info("Fetching events from cursor ", cursor)
-			options := eventstore.FetchEventsOptions{Cursor: cursor}
+			options := eventstore.FetchEventsOptions{CursorFrom: cursor}
 
 			var data eventstore.FetchEventsResponse
 			if err := eventstore.FetchEvents(ctx, options, &data); err != nil {
