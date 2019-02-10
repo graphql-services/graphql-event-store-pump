@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"log"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/graphql-services/graphql-event-store-pump/src"
 	"github.com/urfave/cli"

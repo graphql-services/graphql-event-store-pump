@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"path"
 
-	"github.com/golang/glog"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/graphql-services/go-saga/eventstore"
 )
@@ -30,7 +30,7 @@ func StartPump(aggregatorURL string) error {
 				return err
 			}
 
-			glog.Infof("Sending Event %s", e.ID)
+			log.Infof("Sending Event %s", e.ID)
 			res, err := http.Post(u.String(), "application/json", bytes.NewReader(data))
 			if err != nil {
 				return err
@@ -41,7 +41,7 @@ func StartPump(aggregatorURL string) error {
 				return err
 			}
 
-			glog.Infof("Event %s processed", e.ID)
+			log.Infof("Event %s processed", e.ID)
 
 			return nil
 		},

@@ -8,8 +8,8 @@ import (
 	"net/url"
 	"path"
 
-	"github.com/golang/glog"
 	"github.com/graphql-services/go-saga/eventstore"
+	log "github.com/sirupsen/logrus"
 )
 
 // PerformBootupOptions ..
@@ -19,7 +19,7 @@ type PerformBootupOptions struct {
 
 // PerformBootup ...
 func PerformBootup(options PerformBootupOptions) error {
-	glog.Info("Initializing bootup")
+	log.Info("Initializing bootup")
 
 	u, err := url.Parse(options.AggregatorURL)
 	if err != nil {
@@ -33,11 +33,11 @@ func PerformBootup(options PerformBootupOptions) error {
 	}
 
 	if res.StatusCode == 200 || res.StatusCode == 204 {
-		glog.Info("Bootup not required")
+		log.Info("Bootup not required")
 		return nil
 	}
 
-	glog.Info("Booting up aggregator")
+	log.Info("Booting up aggregator")
 
 	if err := checkStatusCode(res, 404, "checking last event"); err != nil {
 		return err
@@ -45,7 +45,7 @@ func PerformBootup(options PerformBootupOptions) error {
 
 	ctx := context.Background()
 
-	glog.Info("Fetching all events started")
+	log.Info("Fetching all events started")
 
 	ch := fetchAllEvents(ctx)
 
@@ -60,7 +60,7 @@ func PerformBootup(options PerformBootupOptions) error {
 }
 
 func forwardResponse(ctx context.Context, res eventstore.FetchEventsResponse, aggregatorURL string) error {
-	glog.Info("Forwarding events ", len(res.Events))
+	log.Info("Forwarding events ", len(res.Events))
 	importURL, err := url.Parse(aggregatorURL)
 	if err != nil {
 		return err
@@ -78,7 +78,7 @@ func forwardResponse(ctx context.Context, res eventstore.FetchEventsResponse, ag
 		return err
 	}
 
-	glog.Info("Events forwarded ", resp.StatusCode)
+	log.Info("Events forwarded ", resp.StatusCode)
 
 	return nil
 }
@@ -89,7 +89,7 @@ func fetchAllEvents(ctx context.Context) <-chan eventstore.FetchEventsResponse {
 
 	go func() {
 		for {
-			glog.Info("Fetching events from cursor ", cursor)
+			log.Info("Fetching events from cursor ", cursor)
 			options := eventstore.FetchEventsOptions{CursorFrom: cursor}
 
 			var data eventstore.FetchEventsResponse

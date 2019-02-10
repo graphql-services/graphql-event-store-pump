@@ -5,13 +5,15 @@
 Data pump for services aggregating EventStore events.
 
 This service can be used for 2 things:
+
 1. initial bootstrap of aggregator by loading all events from EventStore and sending them to aggregator
 1. continual updates of aggregator by consuming events from NSQ and forwarding them to aggregator
 
 NOTE: batch importing should be sequential, so this worker should not be running more than once for each aggregator.
 
 ## Diagram
-![EvemtStore Pump diagram](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/graphql-services/graphql-event-store-pump/master/resources/diagram.puml?v1 'EvemtStore Pump diagram')
+
+![EventStore Pump diagram](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/graphql-services/graphql-event-store-pump/master/resources/diagram.puml?v1 'EvemtStore Pump diagram')
 
 # Aggregator requirements
 
@@ -23,7 +25,7 @@ GET /events/latest
 - it's aggregator's responsibility to store latest event
 - status code 200 with event payload: no bootup needed, skipping
 - status code 204: no bootup needed, skipping
-- status code 404: bootup required, proceed to 
+- status code 404: bootup required, proceed to
 
 POST /events/batch
 - endpoint for forwarding array of events, response should be 201 to indicate success
